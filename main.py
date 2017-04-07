@@ -20,11 +20,11 @@ session = Session()
 # Define a few command handlers. These usually take the two arguments bot and
 # update. Error handlers also receive the raised TelegramError object in error.
 def start(bot, update):
-    update.message.reply_text('Hi!')
+    update.message.reply_text('Hello, I can send you any card form Gwent, but you should ask for it via inline query. Like this @gwent_card_bot Ci')
 
 
 def help(bot, update):
-    update.message.reply_text('Help!')
+    update.message.reply_text('I can send you any card form Gwent, but you should ask for it via inline query. Like this @gwent_card_bot Ci')
 
 
 def escape_markdown(text):
