@@ -2,9 +2,10 @@ from uuid import uuid4
 import sys
 import os
 import re
+from database import Cards, Session, literal
 
 from telegram import InlineQueryResultArticle, ParseMode, \
-    InputTextMessageContent
+    InputTextMessageContent, InlineQueryResultPhoto
 from telegram.ext import Updater, InlineQueryHandler, CommandHandler
 import logging
 
@@ -13,6 +14,7 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
                     level=logging.INFO)
 
 logger = logging.getLogger(__name__)
+session = Session()
 
 
 # Define a few command handlers. These usually take the two arguments bot and
@@ -33,24 +35,9 @@ def escape_markdown(text):
 
 def inlinequery(bot, update):
     query = update.inline_query.query
-    results = list()
-
-    results.append(InlineQueryResultArticle(id=uuid4(),
-                                            title="Caps",
-                                            input_message_content=InputTextMessageContent(
-                                                query.upper())))
-
-    results.append(InlineQueryResultArticle(id=uuid4(),
-                                            title="Bold",
-                                            input_message_content=InputTextMessageContent(
-                                                "*%s*" % escape_markdown(query),
-                                                parse_mode=ParseMode.MARKDOWN)))
-
-    results.append(InlineQueryResultArticle(id=uuid4(),
-                                            title="Italic",
-                                            input_message_content=InputTextMessageContent(
-                                                "_%s_" % escape_markdown(query),
-                                                parse_mode=ParseMode.MARKDOWN)))
+    r = session.query(Cards).filter(Cards.name.like('%'+query+'%')).all()
+    results = list([InlineQueryResultPhoto(id=uuid4(), title=x.name, thumb_url=x.image, photo_url=x.image,
+                                           caption=x.name+'\n'+x.text, parse_mode=ParseMode.MARKDOWN) for x in r[:10]])
 
     update.inline_query.answer(results)
 
@@ -64,11 +51,10 @@ def main():
     PORT = int(os.environ.get('PORT', '5000'))
     updater = Updater(TOKEN)
 
-    updater.start_webhook(listen="0.0.0.0",
-                          port=PORT,
-                          url_path=TOKEN)
+    updater.start_webhook(listen="0.0.0.0", port=PORT, url_path=TOKEN)
 
     updater.bot.setWebhook("https://gwentbot.herokuapp.com/" + TOKEN)
+
 
     # Get the dispatcher to register handlers
     dp = updater.dispatcher
@@ -86,6 +72,7 @@ def main():
     # Block until the user presses Ctrl-C or the process receives SIGINT,
     # SIGTERM or SIGABRT. This should be used most of the time, since
     # start_polling() is non-blocking and will stop the bot gracefully.
+    #updater.start_polling()
     updater.idle()
 
 
