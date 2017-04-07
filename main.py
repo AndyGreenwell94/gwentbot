@@ -68,7 +68,7 @@ def main():
                           port=PORT,
                           url_path=TOKEN)
 
-    updater.bot.setWebhook("https://gwentbot.herokuapp.com//" + TOKEN)
+    updater.bot.setWebhook("https://gwentbot.herokuapp.com/" + TOKEN)
     # Get the dispatcher to register handlers
     dp = updater.dispatcher
 
