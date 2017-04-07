@@ -70,7 +70,6 @@ def main():
 
     updater.bot.setWebhook("https://gwentbot.herokuapp.com/" + TOKEN)
 
-    updater.idle()
     # Get the dispatcher to register handlers
     dp = updater.dispatcher
 
@@ -83,9 +82,6 @@ def main():
 
     # log all errors
     dp.add_error_handler(error)
-
-    # Start the Bot
-    updater.start_polling()
 
     # Block until the user presses Ctrl-C or the process receives SIGINT,
     # SIGTERM or SIGABRT. This should be used most of the time, since
