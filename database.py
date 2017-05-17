@@ -1,12 +1,11 @@
+import os
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy import Column, Integer, String, literal
+from sqlalchemy import Column, Integer, String
 
-engine = create_engine('postgres://qobxbmkaamrqmr:469bd55ba4f4570379ca46b9dcd981085a9a72960c7e3f0982062916e38836d8@ec2-54-247-120-169.eu-west-1.compute.amazonaws.com:5432/d4a34ee9v58scr')
-
+engine = create_engine(os.environ.get('CONNECTION'))
 Base = declarative_base()
-
 Session = sessionmaker(bind=engine)
 
 
@@ -19,4 +18,5 @@ class Cards(Base):
     text = Column(String)
     flavor = Column(String)
     image = Column(String)
+
 

@@ -2,14 +2,11 @@ from uuid import uuid4
 import sys
 import os
 import re
-from database import Cards, Session, literal
-
-from telegram import InlineQueryResultArticle, ParseMode, \
-    InputTextMessageContent, InlineQueryResultPhoto
+from database import Cards, Session
+from telegram import ParseMode, InlineQueryResultPhoto
 from telegram.ext import Updater, InlineQueryHandler, CommandHandler
 import logging
 
-# Enable logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
 
@@ -17,14 +14,14 @@ logger = logging.getLogger(__name__)
 session = Session()
 
 
-# Define a few command handlers. These usually take the two arguments bot and
-# update. Error handlers also receive the raised TelegramError object in error.
 def start(bot, update):
-    update.message.reply_text('Hello, I can send you any card form Gwent, but you should ask for it via inline query. Like this @gwent_card_bot Ci')
+    update.message.reply_text('Hello, I can send you any card form Gwent,'
+                              ' but you should ask for it via inline query. Like this @gwent_card_bot Ciri')
 
 
 def help(bot, update):
-    update.message.reply_text('I can send you any card form Gwent, but you should ask for it via inline query. Like this @gwent_card_bot Ci')
+    update.message.reply_text('I can send you any card form Gwent,'
+                              ' but you should ask for it via inline query. Like this @gwent_card_bot Ci')
 
 
 def escape_markdown(text):
@@ -47,32 +44,21 @@ def error(bot, update, error):
 
 
 def main():
-    TOKEN = '318904322:AAHrKgPj0LuRd5UytqdI0gQXiSzWGNBUwEA'
+    TOKEN = os.environ.get('TOKEN')
     PORT = int(os.environ.get('PORT', '5000'))
     updater = Updater(TOKEN)
 
     updater.start_webhook(listen="0.0.0.0", port=PORT, url_path=TOKEN)
-
     updater.bot.setWebhook("https://gwentbot.herokuapp.com/" + TOKEN)
 
-
-    # Get the dispatcher to register handlers
     dp = updater.dispatcher
 
-    # on different commands - answer in Telegram
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(CommandHandler("help", help))
-
-    # on noncommand i.e message - echo the message on Telegram
     dp.add_handler(InlineQueryHandler(inlinequery))
 
-    # log all errors
     dp.add_error_handler(error)
 
-    # Block until the user presses Ctrl-C or the process receives SIGINT,
-    # SIGTERM or SIGABRT. This should be used most of the time, since
-    # start_polling() is non-blocking and will stop the bot gracefully.
-    #updater.start_polling()
     updater.idle()
 
 
