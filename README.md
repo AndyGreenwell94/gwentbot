@@ -1,2 +1,2 @@
 # gwentbot
-Telegramm bot for gwent
+Telegram bot for gwent
